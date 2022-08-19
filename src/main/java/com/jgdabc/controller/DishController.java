@@ -145,14 +145,14 @@ public class DishController {
         return  R_.success(dishDto);
 
     }
-////    修改菜品
-//    @PutMapping
-//    public R_<String> update(@RequestBody DishDto dishDto) {
-//
-//        log.info(dishDto.toString());
-//        dishService.updateWithFlavor(dishDto);
-//        return R_.success("修改菜品成功");
-//    }
+//    修改菜品
+    @PutMapping
+    public R_<String> update(@RequestBody DishDto dishDto) {
+
+        log.info(dishDto.toString());
+        dishService.updateWithFlavor(dishDto);
+        return R_.success("修改菜品成功");
+    }
 //    根据条件查询对应的菜品数据
     @GetMapping("/list")
     public R_<List<DishDto>> list(Dish dish)
