@@ -41,6 +41,46 @@ public class DishController {
         dishService.saveWithFlavor(dishDto);
         return R_.success("新增菜品成功");
     }
+//
+//    @GetMapping("/page")
+//    public R_<Page> page(int page, int pageSize, String name) {
+////        log.info("page:{}", page);
+////        log.info("pageSize:{}", pageSize);
+////        log.info("name{}", name);
+////       构造一个分页构造器对象
+//        Page<Dish> dishPage = new Page<>(page, pageSize);
+////        构造一个分页条件构造器
+//        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+////        根据name去添加条件，作为查询的条件，这个名字啊
+////        我们最好去用迷糊查询
+//        queryWrapper.like(name!=null,Dish::getName,name);
+////        然后做一个排序的条件
+//        queryWrapper.orderByDesc(Dish::getUpdateTime);
+////        做分页查询具体
+//        dishService.page(dishPage,queryWrapper);//最后的数据表其实已经自动处理封装到dishPage里面
+//
+////        返回给前端以R_对象封装的数据对象
+//        return R_.success(dishPage);
+//
+
+
+//        return null;
+
+//        //构造一个分页构造器对象
+//        Page<Dish> dishPage = new Page<>(page,pageSize);
+//
+//        //构造一个条件构造器
+//        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+//        //添加过滤条件 注意判断是否为空  使用对name的模糊查询
+//        queryWrapper.like(name != null,Dish::getName,name);
+//        //添加排序条件  根据更新时间降序排
+//        queryWrapper.orderByDesc(Dish::getUpdateTime);
+//        //去数据库处理分页 和 查询
+//        dishService.page(dishPage,queryWrapper);
+//
+//        //因为上面处理的数据没有分类的id,这样直接返回R.success(dishPage)虽然不会报错，但是前端展示的时候这个菜品分类这一数据就为空
+//        return R_.success(dishPage);
+//    }
 
     @GetMapping("/page")
     public R_<Page<DishDto>> page(int page, int pageSize, String name) {
@@ -57,11 +97,12 @@ public class DishController {
         //添加排序条件  根据更新时间降序排
         queryWrapper.orderByDesc(Dish::getUpdateTime);
         //去数据库处理分页 和 查询
-        dishService.page(dishPage, queryWrapper);
+        dishService.page(dishPage, queryWrapper);//这样是原始的未扩展的分页查询的数据的封装。
 
         //获取到dish的所有数据 records属性是分页插件中表示分页中所有的数据的一个集合
         List<Dish> records = dishPage.getRecords();
-
+//        item代表遍历出来的每一个菜品就是Dish
+//        这里类似一个遍历属性赋值的过程。
         List<DishDto> list = records.stream().map((item) -> {
             //对实体类DishDto进行categoryName的设值
 
@@ -71,21 +112,22 @@ public class DishController {
             //获取分类的id
             Long categoryId = item.getCategoryId();
             //通过分类id获取分类对象
+
             Category category = categoryService.getById(categoryId);
             if (category != null) {
-                //设置实体类DishDto的categoryName属性值
+                //设置实体类DishDto的categoryName属性值。这里是调用到category的查询查询到name然后赋值给具体的dto中扩展的属性
                 String categoryName = category.getName();
                 dishDto.setCategoryName(categoryName);
             }
-            return dishDto;
-        }).collect(Collectors.toList());
+            return dishDto;//返回每一个dto
+        }).collect(Collectors.toList());//这里收集起来给到列表
 
         //对象拷贝  使用框架自带的工具类，第三个参数是不拷贝到属性
-        BeanUtils.copyProperties(dishPage, dishDtoPage, "records");
-        dishDtoPage.setRecords(list);
+        BeanUtils.copyProperties(dishPage, dishDtoPage, "records");//除去records以外的属性的拷贝
+        dishDtoPage.setRecords(list);//将收集起来的list赋值给最终的dto的records
         //因为上面处理的数据没有分类的id,这样直接返回R.success(dishPage)虽然不会报错，但是前端展示的时候这个菜品分类这一数据就为空
         //所以进行了上面的一系列操作
-        return R_.success(dishDtoPage);
+        return R_.success(dishDtoPage);//最终返回。
     }
 
     /**
@@ -103,14 +145,14 @@ public class DishController {
         return  R_.success(dishDto);
 
     }
-//    修改菜品
-    @PutMapping
-    public R_<String> update(@RequestBody DishDto dishDto) {
-
-        log.info(dishDto.toString());
-        dishService.updateWithFlavor(dishDto);
-        return R_.success("修改菜品成功");
-    }
+////    修改菜品
+//    @PutMapping
+//    public R_<String> update(@RequestBody DishDto dishDto) {
+//
+//        log.info(dishDto.toString());
+//        dishService.updateWithFlavor(dishDto);
+//        return R_.success("修改菜品成功");
+//    }
 //    根据条件查询对应的菜品数据
     @GetMapping("/list")
     public R_<List<DishDto>> list(Dish dish)

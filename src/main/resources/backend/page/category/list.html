@@ -205,6 +205,7 @@
             this.classData.dialogVisible = true
           },
           editHandle(dat) {
+            console.log(dat.data());
             this.classData.title = '修改分类'
             this.action = 'edit'
             this.classData.name = dat.name

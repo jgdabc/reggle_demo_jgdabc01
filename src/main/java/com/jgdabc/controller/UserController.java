@@ -10,6 +10,7 @@ import com.jgdabc.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+    private CacheManager cacheManager;
 
     @PostMapping("/sendMsg")
     private R_<String> sendMsg(@RequestBody User user, HttpSession session) {

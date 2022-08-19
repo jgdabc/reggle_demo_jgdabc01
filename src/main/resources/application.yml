@@ -9,6 +9,9 @@ spring:
     password: 123456
     port: 6379
     database: 0
+  cache:
+    redis:
+      time-to-live: 1800000 # 1800秒//这是缓存的国企时间
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver

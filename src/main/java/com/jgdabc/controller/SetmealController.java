@@ -16,6 +16,7 @@ import com.mysql.cj.log.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -90,6 +91,7 @@ public class SetmealController {
 
     }
     @GetMapping("list")
+//    @Cacheable(value = "setmealCache",key ="#setmeal.categoryId+'_'+#setmeal.status") //动态的将这样的key拼接出来。
     public R_<List<Setmeal>>list( Setmeal setmeal)
     {
         LambdaQueryWrapper<Setmeal> setmealLambdaQueryWrapper = new LambdaQueryWrapper<>();

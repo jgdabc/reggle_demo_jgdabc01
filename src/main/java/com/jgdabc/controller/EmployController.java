@@ -103,14 +103,11 @@ public class EmployController {
     }
 //    根据id修改员工信息
     @PutMapping
-    public R_<String> update(HttpServletRequest request,@RequestBody  Employee employee)
+    public R_<String> update(@RequestBody  Employee employee)
     {
-        Long empid = (long)request.getSession().getAttribute("employee");
-//        employee.setUpdateTime(LocalDateTime.now());
-//        employee.setUpdateUser(empid);
         employService.updateById(employee);
-        long id = Thread.currentThread().getId();
-        log.info("当前线程的id为{}",id);
+
+
         return R_.success("员工信息修改成功");
 
     }
