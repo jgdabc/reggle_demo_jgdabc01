@@ -32,6 +32,18 @@ public class DishController {
     private DishService dishService;
     @Autowired
     private DishFlavorService dishFlavorService;
+    @PostMapping("/status/{status}")
+    public R_<String> ban_status(@PathVariable("status") Integer status,long ids)
+    {
+        Dish dish = dishService.getById(ids);
+        if(dish!=null)
+        {
+            dish.setStatus(status);
+            dishService.updateById(dish);
+            return  R_.success("状态修改成功");
+        }
+        return  R_.error("菜品状态修改异常");
+    }
 
     //    新增菜品
     @PostMapping

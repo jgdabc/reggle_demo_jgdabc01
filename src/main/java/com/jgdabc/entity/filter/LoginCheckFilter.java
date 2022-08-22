@@ -64,6 +64,7 @@ public class LoginCheckFilter implements Filter {
 //            log.info("当前线程的id为{}",userid);
 //            log.info("用户已经登录，用户id为{}",userid);
             BaseContext.setCurrentId(user);
+//            request.getSession().setAttribute("user",user);
             filterChain.doFilter(request,response);
             return;
         }
