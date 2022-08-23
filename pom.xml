@@ -16,6 +16,12 @@
     </properties>
 
     <dependencies>
+        <!--qq邮箱-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <dependency>
 <!--            springbbot起步依赖-->
             <groupId>org.springframework.boot</groupId>

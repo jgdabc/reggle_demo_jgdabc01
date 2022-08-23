@@ -10,12 +10,18 @@ import com.jgdabc.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import javax.annotation.Resources;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
@@ -27,6 +33,10 @@ public class UserController {
     @Autowired
     private UserService userService;
     private CacheManager cacheManager;
+    @Resource
+    private JavaMailSender javaMailSender;
+    @Value("${spring.mail.username}")
+    private String from;
 
     @PostMapping("/sendMsg")
     private R_<String> sendMsg(@RequestBody User user, HttpSession session) {
@@ -34,14 +44,35 @@ public class UserController {
         if (StringUtils.isNotEmpty(phone)) {
             String code = ValidateCodeUtils.generateValidateCode(4).toString();//生成四位的验证码
             log.info("code={}", code);
+//            构建一个邮件的对象
+            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+//          设置邮件发件者
+            simpleMailMessage.setFrom(from);
+//            设置邮件接受者
+            simpleMailMessage.setTo(phone);
+//            设置有纪念的主题
+            simpleMailMessage.setSubject("登录验证码");
+//            设置邮件的征文
+            String text = "^-^道哥（兰舟千帆）给您的验证码为" + code + "请勿泄露";
+            simpleMailMessage.setText(text);
+
 //            SMSUtils.sendMessage("","","","");//这里可以自己调用阿里云的接口
 //            生成验证码，也可以自己模拟一下，用工具类将验证码生成一下，只要知道这个验证码就可以
 //            然后手机端就可以进行登录
 //将生成的验证码保存到Session
             session.setAttribute(phone, code);
-            return R_.success("手机验证码短信发送成功");
+//            return R_.success("手机验证码短信发送成功");
 
-        }
+            try {
+                javaMailSender.send(simpleMailMessage);
+                return R_.success("手机验证码短信发送成功");
+            } catch (MailException e) {
+                e.printStackTrace();
+            }
+
+
+
+//        }
 
 //        获取手机号
 //        生成随机验证码
@@ -49,9 +80,14 @@ public class UserController {
 //        要将生成的验证码保存一下，然后比较
 //        可以将验证码保存在session当中
 
-        return R_.error("短信发送失败");
+//        return R_.error("短信发送失败");
+
+
+        }
+        return R_.error("手机验证码发送失败");
 
     }
+
 
 
     //    移动应用登录端
